@@ -17,9 +17,14 @@ def load_gtfs(zip_path: str) -> Dict[str, pd.DataFrame]:
 
     data = {}
 
+    blacklist = ["calendar", "calendar_dates", "shapes", "blocks", "agency"]
+
     with zipfile.ZipFile(zip_path, "r") as z:
         for filename in z.namelist():
             if not filename.endswith(".txt"):
+                continue
+
+            if filename[:-4] in blacklist:
                 continue
 
             name = filename[:-4]  # remove .txt
@@ -122,13 +127,13 @@ def gtfs_based_on_routes(gtfs):
 
     return gtfs_copy
 
-def gtfs_where_lines(path, line_names):
+def gtfs_where_lines(path, line_names) -> Dict[str, pd.DataFrame]:
     gtfs = load_gtfs(path)
     gtfs["routes"] = routes_for_lines_names(gtfs, line_names)
     gtfs = gtfs_based_on_routes(gtfs)
     return gtfs
 
-def gtfs_where_area(path, min_point, max_point):
+def gtfs_where_area(path, min_point, max_point) -> Dict[str, pd.DataFrame]:
     gtfs = load_gtfs(path)
     gtfs["stops"] = stops_for_lon_and_lat(gtfs, min_point, max_point)
     gtfs = gtfs_based_on_stops(gtfs)

@@ -23,7 +23,7 @@ random.seed(RANDOM_SEED)
 
 def run():
     env = simpy.Environment()
-    stops = {n: Stop(n) for n in ['A', 'B', 'C', 'D', 'E']}
+    stops = {n: Stop(env, n, 1) for n in ['A', 'B', 'C', 'D', 'E']}
     metrics = {'generated': 0, 'records': [], 'incomplete': [], 'onboard': {}}
 
 
@@ -50,7 +50,7 @@ def run():
 
 
     incomplete_onboard = sum(len(lst) for lst in metrics['onboard'].values())
-    waiting_at_stops = sum(len(s.passanger_queue) for s in stops.values())
+    waiting_at_stops = sum(len(s.passengers) for s in stops.values())
 
     print(f"Generated passengers: {metrics['generated']}")
     print(f"Completed trips: {len(completed)}")
